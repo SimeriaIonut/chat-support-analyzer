@@ -1,0 +1,26 @@
+.heading {
+  font-weight: 300 !important;
+  color: #423f3f;
+  margin: 24px 0 48px 0 !important;
+  text-align: center;
+}
+
+.sentiment.none {
+  color: grey;
+}
+
+.sentiment.positive {
+  color: green;
+}
+
+.sentiment.neutral {
+  color: orange;
+}
+
+.sentiment.negative {
+  color: red;
+}
+
+.slider-container {
+  margin-top: 48px;
+}
