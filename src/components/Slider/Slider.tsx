@@ -1,27 +1,5 @@
-import React from 'react';
 import { Slider as OriginalSlider, styled } from '@mui/material';
-
-enum Sentiments {
-  Negative = 'negative',
-  Neutral = 'neutral',
-  Positive = 'positive',
-  None = 'none',
-}
-
-const marks = [
-  {
-    value: 0,
-    label: 'Negative',
-  },
-  {
-    value: 50,
-    label: 'Neutral',
-  },
-  {
-    value: 100,
-    label: 'Positive',
-  },
-];
+import { Sentiments, SLIDER_OPTIONS } from '../utils/constants';
 
 const sentimentsColorMap = {
   negative: '#B42A05',
@@ -36,7 +14,7 @@ type Props = {
 };
 
 export default function Slider({ progressBarValue, sentiment }: Props) {
-  const PrettoSlider = styled(OriginalSlider)({
+  const Slider = styled(OriginalSlider)({
     color: sentimentsColorMap[sentiment],
     height: 8,
     '& .MuiSlider-track': {
@@ -77,12 +55,12 @@ export default function Slider({ progressBarValue, sentiment }: Props) {
 
   return (
     <div className="slider-container">
-      <PrettoSlider
+      <Slider
         aria-label="Always visible"
         defaultValue={progressBarValue}
         value={progressBarValue}
         step={10}
-        marks={marks}
+        marks={SLIDER_OPTIONS}
         valueLabelDisplay="on"
         style={{
           cursor: 'default',

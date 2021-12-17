@@ -6,18 +6,13 @@ import { Alert, AlertColor, Button, Typography } from '@mui/material';
 import MessageList from './components/MessageList/MessageList';
 import TextInput from './components/TextInput/TextInput';
 import Slider from './components/Slider/Slider';
-
-const BASE_URL =
-  'https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/71011b45-3524-427c-a94a-8256b762b13b';
-const API_KEY =
-  'YXBpa2V5OkRUOWtYQUl4TFNjVFRaWm5wM0pCeGZVMWZDcktSYUhCMFA4QmRRZk43alQ2';
-
-enum Sentiments {
-  Negative = 'negative',
-  Neutral = 'neutral',
-  Positive = 'positive',
-  None = 'none',
-}
+import {
+  Sentiments,
+  BASE_URL,
+  API_KEY,
+  DUMMY_CUSTOMER_RESPONSES,
+} from './components/utils/constants';
+import { getRandomArrayValue } from './components/utils/helpers';
 
 const sentimentsAlertMap: { [key: string]: AlertColor } = {
   negative: 'warning',
@@ -42,7 +37,7 @@ function App() {
 
   useEffect(() => {
     if (text.length > 0) {
-      setBotText((b) => [...b, 'Message from customer here...']);
+      setBotText((b) => [...b, getRandomArrayValue(DUMMY_CUSTOMER_RESPONSES)]);
     }
   }, [text]);
 

@@ -1,7 +1,6 @@
 import { FormControl, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
-
-const ENTER_KEY = 'Enter';
+import { ENTER_KEY } from '../utils/constants';
 
 type Props = {
   setText: Function;
