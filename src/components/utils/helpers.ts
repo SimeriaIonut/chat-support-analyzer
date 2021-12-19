@@ -4,9 +4,12 @@ export const getRandomArrayValue = (array: any[]) =>
 export const shouldSkipAPICall = (array: string[]) => {
   if (array.length === 0) return true;
 
+
   if (array.length <= 5) {
+    // Call the API every 2nd message if at the start of chat
     return array.length % 2 !== 0;
   } else {
+    // Call the API every 5th message to save on API resources
     return array.length % 5 !== 0;
   }
 }
