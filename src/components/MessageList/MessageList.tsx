@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Grid,
   ListItem,
@@ -7,6 +7,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import MessageIcon from '@mui/icons-material/Message';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import { mergeArraysAlternatively } from '../utils/helpers';
 
 type Props = {
@@ -25,10 +26,10 @@ export default function MessageList({ text, botText }: Props) {
     <Grid container style={{ maxHeight: '500px', overflowY: 'scroll' }} spacing={2}>
       {text &&
         botText &&
-        mergeArraysAlternatively(text, botText).map((text, index) => {
+        mergeArraysAlternatively(botText, text).map((text, index) => {
           if (index % 2 === 0) {
             return (
-              <>
+              <React.Fragment key={text + index}>
                 <Grid item xs={6}>
                   <ListItem disablePadding>
                     <ListItemButton
@@ -40,16 +41,16 @@ export default function MessageList({ text, botText }: Props) {
                       <ListItemIcon>
                         <MessageIcon />
                       </ListItemIcon>
-                      <ListItemText primary={text} secondary={'Support'} />
+                      <ListItemText primary={text} secondary={'Customer'} />
                     </ListItemButton>
                   </ListItem>
                 </Grid>
                 <Grid item xs={6}></Grid>
-              </>
+              </React.Fragment>
             );
           } else {
             return (
-              <>
+              <React.Fragment key={text + index}>
                 <Grid item xs={6}></Grid>
                 <Grid item xs={6}>
                   <ListItem disablePadding>
@@ -62,7 +63,7 @@ export default function MessageList({ text, botText }: Props) {
                       <ListItemText
                         style={{ textAlign: 'right' }}
                         primary={text}
-                        secondary={'Customer'}
+                        secondary={'Support'}
                       />
                       <ListItemIcon
                         style={{
@@ -70,12 +71,12 @@ export default function MessageList({ text, botText }: Props) {
                           marginLeft: '32px',
                         }}
                       >
-                        <MessageIcon />
+                        <SupportAgentIcon />
                       </ListItemIcon>
                     </ListItemButton>
                   </ListItem>
                 </Grid>
-              </>
+              </React.Fragment>
             );
           }
         })}

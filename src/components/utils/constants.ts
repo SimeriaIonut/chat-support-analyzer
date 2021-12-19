@@ -44,10 +44,10 @@ export const SLIDER_OPTIONS = [
 ];
 
 export const DUMMY_CUSTOMER_RESPONSES = [
-  "Hi, what is the status on my order?",
-  'Hi, how can I create a return label?',
-  "This doesn't work, can I get a refund?",
-  'The zipper on the suit I bought is broken!',
+  "Hi, I ordered a bag and it arrived broken.",
+  'My order number is #AF213',
+  "It has a very big scratch on the back side.",
+  'This is very unprofessional'
 ];
 
 export const API_CALL_FREQUENCY = 5;

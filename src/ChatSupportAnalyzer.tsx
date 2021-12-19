@@ -12,21 +12,22 @@ import {
   sentimentsAlertMap,
   ProgressBarHistoryType
 } from './components/utils/constants';
-import { getRandomArrayValue } from './components/utils/helpers';
 import { useSentiments } from './hooks/useSentiments';
 import ProgressChart from './components/ProgressChart/ProgressChart';
 
 function ChatSupportAnalyzer() {
   const [text, setText] = useState<string[]>([]);
-  const [botText, setBotText] = useState<string[]>([]);
-  const [isChatActive, setIsStartActive] = useState(false);
+  const [botText, setBotText] = useState<string[]>([DUMMY_CUSTOMER_RESPONSES[0]]);
   const [isStatsEnabled, setIsStatsEnabled] = useState(false);
   const [progressBarHistory, setProgressBarHistory] = useState<ProgressBarHistoryType[]>([]);
   const { sentiment, progressBarValue, hasError, setters } = useSentiments(text);
 
   useEffect(() => {
     if (text.length > 0) {
-      setBotText((b) => [...b, getRandomArrayValue(DUMMY_CUSTOMER_RESPONSES)]);
+      setTimeout(() => {
+        const botMessage = DUMMY_CUSTOMER_RESPONSES[text.length] || 'PLACEHOLDER CUSTOMER TEXT';
+        setBotText((b) => [...b, botMessage]);
+      }, 500);
     }
   }, [text]);
 
@@ -36,9 +37,8 @@ function ChatSupportAnalyzer() {
   }, [progressBarValue]);
 
   const resetChat = () => {
-    setIsStartActive(false);
     setText([]);
-    setBotText([]);
+    setBotText([DUMMY_CUSTOMER_RESPONSES[0]]);
     setters.setProgressBarValue(50);
     setProgressBarHistory([]);
     setIsStatsEnabled(false);
@@ -55,56 +55,43 @@ function ChatSupportAnalyzer() {
           Something went wrong, try again
         </Alert>
       </Snackbar>
-
-      {isChatActive ? (
-        <>
-          <Container
-            style={{
-              padding: '0 48px 24px 48px',
-              borderRadius: '4px',
-              maxWidth: '900px',
-            }}
-            sx={{ bgcolor: 'background.paper' }}
-          >
-            <Box>
-              <MessageList text={text} botText={botText} />
-              <TextInput setText={setText} />
-              <Alert severity={sentimentsAlertMap[sentiment]}>
-                Overall sentiment: <strong>{sentiment}</strong>
-              </Alert>
-              <Slider
-                progressBarValue={progressBarValue}
-                sentiment={sentiment}
-              />
-              {isStatsEnabled && <ProgressChart data={progressBarHistory} />}
-            </Box>
-          </Container>
-          <Container
-            style={{
-              padding: '0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              borderRadius: '4px',
-              maxWidth: '900px',
-            }}
-          >
-            <FormGroup>
-              <FormControlLabel control={<Switch defaultChecked={false} checked={isStatsEnabled} onChange={() => setIsStatsEnabled(!isStatsEnabled)} />} label="Chat progress" />
-            </FormGroup>
-            <Button variant="text" onClick={() => resetChat()}>
-              End chat
-            </Button>
-          </Container>
-        </>
-      ) : (
-        <Button
-          style={{ display: 'block', margin: '0 auto' }}
-          onClick={() => setIsStartActive(true)}
-          variant="contained"
-        >
-          START CHAT
+      <Container
+        style={{
+          padding: '0 48px 24px 48px',
+          borderRadius: '4px',
+          maxWidth: '900px',
+        }}
+        sx={{ bgcolor: 'background.paper' }}
+      >
+        <Box>
+          <MessageList text={text} botText={botText} />
+          <TextInput setText={setText} />
+          <Alert severity={sentimentsAlertMap[sentiment]}>
+            Overall sentiment: <strong>{sentiment}</strong>
+          </Alert>
+          <Slider
+            progressBarValue={progressBarValue}
+            sentiment={sentiment}
+          />
+          {isStatsEnabled && <ProgressChart data={progressBarHistory} />}
+        </Box>
+      </Container>
+      <Container
+        style={{
+          padding: '0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          borderRadius: '4px',
+          maxWidth: '900px',
+        }}
+      >
+        <FormGroup>
+          <FormControlLabel control={<Switch checked={isStatsEnabled} onChange={() => setIsStatsEnabled(!isStatsEnabled)} />} label="Chat progress" />
+        </FormGroup>
+        <Button variant="text" onClick={() => resetChat()}>
+          End chat
         </Button>
-      )}
+      </Container>
     </div>
   );
 }

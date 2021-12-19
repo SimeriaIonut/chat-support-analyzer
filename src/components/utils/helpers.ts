@@ -1,6 +1,3 @@
-export const getRandomArrayValue = (array: any[]) =>
-  array[Math.floor(Math.random() * array.length)];
-
 export const shouldSkipAPICall = (array: string[]) => {
   if (array.length === 0) return true;
 
