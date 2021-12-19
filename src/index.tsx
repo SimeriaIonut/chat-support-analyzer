@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import ChatSupportAnalyzer from './ChatSupportAnalyzer';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ChatSupportAnalyzer />
   </React.StrictMode>,
   document.getElementById('root')
 );

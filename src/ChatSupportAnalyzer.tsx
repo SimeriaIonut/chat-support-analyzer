@@ -1,39 +1,28 @@
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import './App.css';
-import { Alert, AlertColor, Button, Typography } from '@mui/material';
+import './ChatSupportAnalyzer.css';
+import { Alert, Button, FormControlLabel, FormGroup, Snackbar, Switch, Typography } from '@mui/material';
 import MessageList from './components/MessageList/MessageList';
 import TextInput from './components/TextInput/TextInput';
 import Slider from './components/Slider/Slider';
 import {
   Sentiments,
-  BASE_URL,
-  API_KEY,
   DUMMY_CUSTOMER_RESPONSES,
+  sentimentsAlertMap,
+  ProgressBarHistoryType
 } from './components/utils/constants';
 import { getRandomArrayValue } from './components/utils/helpers';
+import { useSentiments } from './hooks/useSentiments';
+import ProgressChart from './components/ProgressChart/ProgressChart';
 
-const sentimentsAlertMap: { [key: string]: AlertColor } = {
-  negative: 'warning',
-  neutral: 'info',
-  positive: 'success',
-  none: 'info',
-};
-
-const getProgressBarPercentage = (value: number) => {
-  if (value === 0) return 50;
-  const min = -1.0;
-  const max = 1.0;
-  return Math.ceil(((value - min) / (max - min)) * 100);
-};
-
-function App() {
+function ChatSupportAnalyzer() {
   const [text, setText] = useState<string[]>([]);
   const [botText, setBotText] = useState<string[]>([]);
-  const [sentiment, setSentiment] = useState<Sentiments>(Sentiments.None);
-  const [progressBarValue, setProgressBarValue] = useState(50);
   const [isChatActive, setIsStartActive] = useState(false);
+  const [isStatsEnabled, setIsStatsEnabled] = useState(false);
+  const [progressBarHistory, setProgressBarHistory] = useState<ProgressBarHistoryType[]>([]);
+  const { sentiment, progressBarValue, hasError, setters } = useSentiments(text);
 
   useEffect(() => {
     if (text.length > 0) {
@@ -42,38 +31,18 @@ function App() {
   }, [text]);
 
   useEffect(() => {
-    if (text.length === 0) return;
-
-    fetch(
-      `${BASE_URL}/v1/analyze?version=2021-08-01&features=emotion,sentiment&entities.emotion=true&text=${text.join(
-        '. '
-      )}`,
-      {
-        headers: {
-          Authorization: `Basic ${API_KEY}`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.sentiment && data.sentiment.document) {
-          setSentiment(data.sentiment.document.label);
-          setProgressBarValue(
-            getProgressBarPercentage(data.sentiment.document.score)
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [text]);
+    const now = new Date();
+    setProgressBarHistory((h) => [...h, { score: progressBarValue, time: `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` }]);
+  }, [progressBarValue]);
 
   const resetChat = () => {
     setIsStartActive(false);
     setText([]);
     setBotText([]);
-    setProgressBarValue(50);
-    setSentiment(Sentiments.None);
+    setters.setProgressBarValue(50);
+    setProgressBarHistory([]);
+    setIsStatsEnabled(false);
+    setters.setSentiment(Sentiments.None);
   };
 
   return (
@@ -81,13 +50,19 @@ function App() {
       <Typography className="heading" variant="h4" component="div" gutterBottom>
         Chat Support Analyzer
       </Typography>
+      <Snackbar open={hasError} autoHideDuration={6000} onClose={() => setters.setHasError(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={() => setters.setHasError(false)} severity="error" sx={{ width: '100%' }}>
+          Something went wrong, try again
+        </Alert>
+      </Snackbar>
+
       {isChatActive ? (
         <>
           <Container
             style={{
               padding: '0 48px 24px 48px',
               borderRadius: '4px',
-              maxWidth: '800px',
+              maxWidth: '900px',
             }}
             sx={{ bgcolor: 'background.paper' }}
           >
@@ -101,17 +76,21 @@ function App() {
                 progressBarValue={progressBarValue}
                 sentiment={sentiment}
               />
+              {isStatsEnabled && <ProgressChart data={progressBarHistory} />}
             </Box>
           </Container>
           <Container
             style={{
               padding: '0',
               display: 'flex',
-              justifyContent: 'flex-end',
+              justifyContent: 'space-between',
               borderRadius: '4px',
-              maxWidth: '800px',
+              maxWidth: '900px',
             }}
           >
+            <FormGroup>
+              <FormControlLabel control={<Switch defaultChecked={false} checked={isStatsEnabled} onChange={() => setIsStatsEnabled(!isStatsEnabled)} />} label="Chat progress" />
+            </FormGroup>
             <Button variant="text" onClick={() => resetChat()}>
               End chat
             </Button>
@@ -130,4 +109,4 @@ function App() {
   );
 }
 
-export default App;
+export default ChatSupportAnalyzer;

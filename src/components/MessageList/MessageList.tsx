@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import {
   Grid,
   ListItem,
@@ -6,6 +7,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import MessageIcon from '@mui/icons-material/Message';
+import { mergeArraysAlternatively } from '../utils/helpers';
 
 type Props = {
   text: string[];
@@ -13,14 +15,14 @@ type Props = {
 };
 
 export default function MessageList({ text, botText }: Props) {
-  const mergeArraysAlternatively = (arr1: string[], arr2: string[]) =>
-    (arr1.length > arr2.length ? arr1 : arr2)
-      .map((_, i) => [arr1[i], arr2[i]])
-      .flat()
-      .filter(Boolean);
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [botText]);
 
   return (
-    <Grid container spacing={2}>
+    <Grid container style={{ maxHeight: '500px', overflowY: 'scroll' }} spacing={2}>
       {text &&
         botText &&
         mergeArraysAlternatively(text, botText).map((text, index) => {
@@ -77,6 +79,7 @@ export default function MessageList({ text, botText }: Props) {
             );
           }
         })}
+      <div ref={messagesEndRef} />
     </Grid>
   );
 }
